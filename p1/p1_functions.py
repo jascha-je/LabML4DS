@@ -14,7 +14,9 @@ import plotly.express as px
 import umap.plot
 from sklearn.manifold import TSNE
 
-### Function Hub ###
+###*********************** Function Hub ***********************###
+
+############################# Subpart 1 #############################
 
 def cat_plot(data, cat_features):
     # Plot barplots
@@ -52,6 +54,30 @@ def num_plot(X):
     plt.title("Heatmap")
     plt.show()
 
+
+############################# Subpart 3 #############################
+
+def plot_outliers(outliers):
+    fig = plt.figure(figsize=(12, 6))
+    gs = gridspec.GridSpec(1,2)
+    ax = {}
+
+    ax[0] = fig.add_subplot(gs[0])
+    ax[0] = sns.scatterplot(x=range(0,440), y=outliers)
+    ax[0].set(xlabel ="Item", ylabel = "Soft-Min score", title ='Soft-Min scores (gamma = 1)')
+    ax[0].set_xticks(range(0,440,40))
+
+    ax[1] = fig.add_subplot(gs[1])
+    ax[1].set(ylabel = "Soft-Min score", title ='Boxplot of Soft-Min scores (gamma = 1)')
+    ax[1].set_xticks([])
+    ax[1] = plt.boxplot(outliers)
+    min, max = [item.get_ydata()[1] for item in ax[1]['whiskers']]
+
+    plt.show()
+    return min, max
+
+
+############################# Subpart 4 #############################
 
 def silhouette_analysis(min_k, max_k, X, Umap = False):
     """ Adapdet from:
