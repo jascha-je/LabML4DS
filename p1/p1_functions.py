@@ -364,7 +364,3 @@ def clusters_stats(df, clustering):
 
     means(df, clustering)
     boxplots(df, clustering)
-
-
-
-
