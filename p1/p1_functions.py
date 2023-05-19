@@ -86,15 +86,15 @@ def distance_plots(mean_distance, var_distance, gamma_range, outliers):
 
     for i in range(len(mean_distance)):
         if i in outliers:
-            axs[1].plot(gamma_range, mean_distance[i], linewidth=2, c="blue")
+            axs[1].plot(gamma_range, mean_distance[i], linewidth=1, c="blue")
         else:
-            axs[1].plot(gamma_range, mean_distance[i], linewidth=0.3)
+            axs[1].plot(gamma_range, mean_distance[i], linewidth=0.6)
 
     for i in range(len(var_distance)):
         if i in outliers:
-            axs[0].plot(gamma_range, var_distance[i], linewidth=2, c="blue")
+            axs[0].plot(gamma_range, var_distance[i], linewidth=1, c="blue")
         else:
-            axs[0].plot(gamma_range, var_distance[i], linewidth=0.3)
+            axs[0].plot(gamma_range, var_distance[i], linewidth=0.6)
 
     sns.scatterplot(x=gamma_range, y=np.var(mean_distance, axis=0), ax=axs[3])
 
@@ -121,9 +121,9 @@ def attribution_stat_plots(statistic, gamma_range, num_features, outliers, type)
 
         for item in range(statistic.shape[0]):
             if item in outliers:
-                ax[f_ind] = plt.plot(gamma_range, statistic[item,:,f_ind], linewidth=2, c="blue")
+                ax[f_ind] = plt.plot(gamma_range, statistic[item,:,f_ind], linewidth=1, c="blue")
             else:
-                ax[f_ind] = plt.plot(gamma_range, statistic[item,:,f_ind], linewidth=0.3)
+                ax[f_ind] = plt.plot(gamma_range, statistic[item,:,f_ind], linewidth=0.6)
 
     plt.show()
 
