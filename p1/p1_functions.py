@@ -42,6 +42,7 @@ def num_plot(X):
     # Plot boxplots
     X.boxplot(figsize=(6, 10))
     plt.title("Boxplot of the Attributes")
+    plt.xticks(rotation=45)
     plt.show()
 
     # Plot pairwise scatterplots
@@ -55,7 +56,7 @@ def num_plot(X):
     plt.show()
 
 
-############################# Subpart 3 #############################
+############################# Subpart 2 #############################
 
 def plot_outliers(outliers):
     fig = plt.figure(figsize=(12, 6))
@@ -75,6 +76,107 @@ def plot_outliers(outliers):
 
     plt.show()
     return min, max
+
+
+############################# Subpart 3 #############################
+
+def distance_plots(mean_distance, var_distance, gamma_range, outliers):
+    fig, axs = plt.subplots(2, 2, figsize=(14, 10))
+    axs = axs.flatten()
+
+    for i in range(len(mean_distance)):
+        if i in outliers:
+            axs[1].plot(gamma_range, mean_distance[i], linewidth=2, c="blue")
+        else:
+            axs[1].plot(gamma_range, mean_distance[i], linewidth=0.3)
+
+    for i in range(len(var_distance)):
+        if i in outliers:
+            axs[0].plot(gamma_range, var_distance[i], linewidth=2, c="blue")
+        else:
+            axs[0].plot(gamma_range, var_distance[i], linewidth=0.3)
+
+    sns.scatterplot(x=gamma_range, y=np.var(mean_distance, axis=0), ax=axs[3])
+
+    sns.scatterplot(x=gamma_range, y=np.mean(var_distance, axis=0), ax=axs[2])
+
+    axs[0].set_ylabel("MEAN of the relevance distances between components")
+    axs[1].set_ylabel("VARIANCE of the relevance distances between components")
+    #axs[2].set_ylabel("VARIANCE of the mean relevance distances between components")
+    axs[2].set_ylabel("Average MEAN of the relevance distances between components")
+    axs[3].set_ylabel("Average VARIANCE of the relevance distances between components")
+    for ax in axs:
+        ax.set_xlabel("Gamma")
+
+    plt.show()
+
+
+def attribution_stat_plots(statistic, gamma_range, num_features, outliers, type):
+    fig = plt.figure(figsize=(14, 14))
+    gs = gridspec.GridSpec(3, 2)
+    ax = {}
+    for f_ind, feature in enumerate(num_features):
+        ax[f_ind] = fig.add_subplot(gs[f_ind])
+        ax[f_ind].set(xlabel="Gamma", ylabel="Bootstrap sample " + type + " relevance", title=feature)
+
+        for item in range(statistic.shape[0]):
+            if item in outliers:
+                ax[f_ind] = plt.plot(gamma_range, statistic[item,:,f_ind], linewidth=2, c="blue")
+            else:
+                ax[f_ind] = plt.plot(gamma_range, statistic[item,:,f_ind], linewidth=0.3)
+
+    plt.show()
+
+
+def attribution_variance_means(mean, variance, gamma_range, num_features, outliers, inliers):
+    fig = plt.figure(figsize=(18, 18))  # (28,28)
+    gs = gridspec.GridSpec(2, 2)
+    ax = {}
+
+    ax[0] = fig.add_subplot(gs[0])
+    ax[0].set(xlabel="Gamma", ylabel="Average bootstrap sample MEAN for INLIERS")
+    # alternative: "Variance of bootstrap sample mean for inliers"
+    for f_ind, feature in enumerate(num_features):
+        ax[0] = sns.scatterplot(x=gamma_range, y=np.var(mean[:,:,f_ind][inliers], axis=0), legend=num_features)
+    ax[0].legend(labels=num_features)
+
+    ax[1] = fig.add_subplot(gs[1])
+    ax[1].set(xlabel="Gamma", ylabel="Average bootstrap sample MEAN for OUTLIERS")
+    # alternative: "Variance of bootstrap sample mean for inliers"
+    for f_ind, feature in enumerate(num_features):
+        ax[1] = sns.scatterplot(x=gamma_range, y=np.var(mean[:,:,f_ind][outliers], axis=0))
+    ax[1].legend(labels=num_features)
+
+    ax[2] = fig.add_subplot(gs[2])
+    ax[2].set(xlabel="Gamma", ylabel="Average bootstrap sample VARIANCE for INLIERS")
+    for f_ind, feature in enumerate(num_features):
+        ax[2] = sns.scatterplot(x=gamma_range, y=np.mean(variance[:,:,f_ind][inliers], axis=0), legend=num_features)
+    ax[2].legend(labels=num_features)
+
+    ax[3] = fig.add_subplot(gs[3])
+    ax[3].set(xlabel="Gamma", ylabel="Average bootstrap sample VARIANCE for OUTLIERS")
+    for f_ind, feature in enumerate(num_features):
+        ax[3] = sns.scatterplot(x=gamma_range, y=np.mean(variance[:,:,f_ind][outliers], axis=0))
+    ax[3].legend(labels=num_features)
+
+    plt.show()
+
+
+def attribution_boxplots(statistic, stat_name):
+    fig = plt.figure(figsize=(14, 14))
+    gs = gridspec.GridSpec(2, 2)
+    ax = {}
+
+    ax[0] = fig.add_subplot(gs[0])
+    ax[0].set(ylabel= "Relevance " + stat_name + " over the Bootstrap samples for OUTLIERS", title="Boxplot, gamma = 1")
+    ax[0] = statistic.boxplot()
+    ax[0].tick_params(axis='x', rotation=45)
+
+    ax[1] = fig.add_subplot(gs[1])
+    ax[1].set(title="Boxplot without outlier points")
+    ax[1].tick_params(axis='x', rotation=45)
+    ax[1] = sns.boxplot(data=statistic, showfliers=False)
+    plt.show()
 
 
 ############################# Subpart 4 #############################
